@@ -58,7 +58,7 @@ pipeline {
 
         emailext (
           mimeType: "text/html",
-          to:"infoloblabs@gmail.com; seema.ahluwalia@infolob.com; girish.mallampalli@infolob.com",
+          to:"reza.arief@bonial.com",
           subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
           attachmentsPattern: "screenshots/*.png, Test_Execution_Report.html",
           body: content
@@ -73,7 +73,7 @@ pipeline {
         def content =  readFile('test-output/emailable-report.html')
 
         emailext (
-          to:"infoloblabs@gmail.com; seema.ahluwalia@infolob.com; girish.mallampalli@infolob.com",
+          to:"reza.arief@bonial.com",
           subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
           attachmentsPattern: "screenshots/*.png, Test_Execution_Report.html",
           body: content
