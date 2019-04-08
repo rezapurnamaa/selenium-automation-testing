@@ -51,37 +51,4 @@ pipeline {
       }
     }
   }
-  post {
-    success {
-      script {
-        def content =  readFile('test-output/emailable-report.html')
-
-        emailext (
-          mimeType: "text/html",
-          to:"reza.arief@bonial.com",
-          subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-          attachmentsPattern: "screenshots/*.png, Test_Execution_Report.html",
-          body: content
-        )
-      }
-
-
-    }
-
-    failure {
-      script {
-        def content =  readFile('test-output/emailable-report.html')
-
-        emailext (
-          to:"reza.arief@bonial.com",
-          subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-          attachmentsPattern: "screenshots/*.png, Test_Execution_Report.html",
-          body: content
-        )
-      }
-
-
-    }
-
-  }
 }
