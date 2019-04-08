@@ -44,7 +44,7 @@ pipeline {
       steps {
         script {
           docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-            sh 'docker push infoloblabs/gap-oracle-selenium:fail'
+            sh 'docker push rezaarief/gap-oracle-selenium:fail'
           }
         }
 
