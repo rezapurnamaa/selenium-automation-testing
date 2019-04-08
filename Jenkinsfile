@@ -11,7 +11,7 @@ pipeline {
 
         stage('Build') {
           tools {
-            maven 'Maven 3.5.2'
+            maven 'testMaven'
           }
 
           steps {
