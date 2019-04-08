@@ -1,29 +1,23 @@
-#!/usr/bin/env groovys
 pipeline {
-    agent any
-
-    stages {
-        stage ('Clone') {
-          steps {
-            git url: 'https://github.com/ksqartechinc/selenium-automation-testing.git', branch: 'inten'
-          }
-        }
-
-        stage('Build') {
-          tools {
-            maven 'testMaven'
-          }
-
-          steps {
-                sh 'mvn -B -DskipTests clean package'
-                sh 'docker images'
-
-          }
-        }
-
-        stage('Test') {
-          steps {
-            sh '''
+  agent any
+  stages {
+    stage('Clone') {
+      steps {
+        git(url: 'https://github.com/rezapurnamaa/selenium-automation-testing.git', branch: 'inten')
+      }
+    }
+    stage('Build') {
+      tools {
+        maven 'testMaven'
+      }
+      steps {
+        sh 'mvn -B -DskipTests clean package'
+        sh 'docker images'
+      }
+    }
+    stage('Test') {
+      steps {
+        sh '''
               set +e
 
               rm -rf test-output/
@@ -44,36 +38,33 @@ pipeline {
               	exit -1
               fi
             '''
-          }
-        }
-
-        stage('Publishing') {
-          steps {
-            script {
-              docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                  sh 'docker push infoloblabs/gap-oracle-selenium:fail'
-              }
-            }
-
-          }
-
-        }
-
+      }
     }
-    post {
+    stage('Publishing') {
+      steps {
+        script {
+          docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+            sh 'docker push infoloblabs/gap-oracle-selenium:fail'
+          }
+        }
+
+      }
+    }
+  }
+  post {
     success {
       script {
-
         def content =  readFile('test-output/emailable-report.html')
 
         emailext (
-            mimeType: "text/html",
-            to:"infoloblabs@gmail.com; seema.ahluwalia@infolob.com; girish.mallampalli@infolob.com",
-            subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-            attachmentsPattern: "screenshots/*.png, Test_Execution_Report.html",
-            body: content
+          mimeType: "text/html",
+          to:"infoloblabs@gmail.com; seema.ahluwalia@infolob.com; girish.mallampalli@infolob.com",
+          subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+          attachmentsPattern: "screenshots/*.png, Test_Execution_Report.html",
+          body: content
         )
       }
+
 
     }
 
@@ -82,13 +73,15 @@ pipeline {
         def content =  readFile('test-output/emailable-report.html')
 
         emailext (
-            to:"infoloblabs@gmail.com; seema.ahluwalia@infolob.com; girish.mallampalli@infolob.com",
-            subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-            attachmentsPattern: "screenshots/*.png, Test_Execution_Report.html",
-            body: content
-          )
-
+          to:"infoloblabs@gmail.com; seema.ahluwalia@infolob.com; girish.mallampalli@infolob.com",
+          subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+          attachmentsPattern: "screenshots/*.png, Test_Execution_Report.html",
+          body: content
+        )
       }
+
+
     }
+
   }
 }
